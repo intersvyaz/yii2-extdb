@@ -1,0 +1,15 @@
+{
+	"name": "intersvyaz/yii2-extdb",
+	"description": "Extended Yii2 database class with cool stuff",
+	"keywords": ["yii2", "extension", "database"],
+	"homepage": "https://github.com/intersvyaz/yii2-extdb.git",
+	"license": "MIT",
+    "minimum-stability": "dev",
+	"require": {
+		"php": ">=5.4.0",
+		"yiisoft/yii2": "dev-master"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "4.1.1"
+	}
+}
