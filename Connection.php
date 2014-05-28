@@ -1,8 +1,7 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @link http://is74.ru/
+ * @copyright Copyright (c) 2014 Интерсвязь
  */
 
 namespace Intersvyaz\ExtDb;
@@ -15,16 +14,12 @@ use yii\base\NotSupportedException;
 use yii\caching\Cache;
 
 /**
- * @todo сделать описание наших изменений
- * Документацию по базовому использованию компонента смотрите @see \yii\db\Command
+ * @inheritdoc
  */
 class Connection extends \yii\db\Connection
 {
     /**
-     * Creates a command for execution.
-     * @param string $sql the SQL statement to be executed
-     * @param array $params the parameters to be bound to the SQL statement
-     * @return Command the DB command
+     * @inheritdoc
      */
     public function createCommand($sql = null, $params = [])
     {
