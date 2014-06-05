@@ -39,6 +39,17 @@ class Command extends \yii\db\Command
     }
 
     /**
+     * Доработанная версия bindValues, умеет принимать массив в формате, который используется парсером (@see \app\components\Command::replaceComment())
+     * @param array $values
+     * @return static
+     */
+    public function bindValues($values)
+    {
+        $values = $this->simplifyParams($values);
+        return parent::bindValues($values);
+    }
+
+    /**
      * Функция разбора и подготовки текста sql запроса.
      * @param  string $sql Запрос который нужно подготовить.
      * @param array $params Параметры построения запроса.
@@ -70,7 +81,7 @@ class Command extends \yii\db\Command
             }
         }
 
-        return preg_replace("/\n+/", "\n", $sql);
+        return preg_replace("/\n+/", "\n", trim($sql));
     }
 
     /**
@@ -79,19 +90,18 @@ class Command extends \yii\db\Command
      * @param string $comment Заменямый комментарий.
      * @param string $queryInComment Текст внутри комментария.
      * @param string $paramName Имя параметра.
-     * @param array $params Параметры построения запроса.
-     *      (['p1'=>'v1', 'p2' => ['value', 'PDO_SQL_TYPE'], 'p3' => ['value', 'bind'=>'text'], 'p4' => [['v1', 'v2', ...]]])
+     * @param array $params Массив параметров
      * @return string Запрос с замененным комментирием.
      */
     protected function replaceComment($query, $comment, $queryInComment, $paramName, array &$params)
     {
-        if (array_key_exists($paramName, $params)) {
-            $param = $params[$paramName];
-            if (is_array($param)) {
-                $bind = isset($param['bind']) ? $param['bind'] : false;
-                $value = isset($param[0]) ? $param[0] : null;
+        if(array_key_exists($paramName, $params)) {
+            $paramValue = $params[$paramName];
+            if (is_array($paramValue)) {
+                $value = isset($paramValue[0]) ? $paramValue[0] : null;
+                $bind = isset($paramValue['bind']) ? $paramValue['bind'] : true;
             } else {
-                $value = $param;
+                $value = $paramValue;
                 $bind = true;
             }
 
@@ -105,13 +115,11 @@ class Command extends \yii\db\Command
             } elseif ($bind === 'text') {
                 $queryInComment = preg_replace('/' . preg_quote($paramName) . '/', $value, $queryInComment);
             }
-        } else {
+        }else{
             $queryInComment = '';
         }
 
-        $query = str_replace($comment, $queryInComment, $query);
-
-        return $query;
+        return str_replace($comment, $queryInComment, $query);
     }
 
     /**
@@ -119,7 +127,7 @@ class Command extends \yii\db\Command
      * @param array $params Параметры построения запроса.
      * @return array
      */
-    public function simplifyParams($params)
+    protected function simplifyParams($params)
     {
         if (empty($params)) {
             return $params;
@@ -128,11 +136,14 @@ class Command extends \yii\db\Command
         $newParams = [];
         foreach ($params as $key => $value) {
             if (is_array($value)) {
-                if (is_array($value[0])) {
+                if (isset($value[0]) && is_array($value[0])) {
                     foreach ($value[0] as $valKey => $valVal)
                         $newParams[$key . '_' . $valKey] = $valVal;
                 } elseif (!isset($value['bind']) || $value['bind'] === true) {
-                    $newParams[$key] = $value;
+                    if(isset($value[0]) && isset($value[1]))
+                        $newParams[$key] = [$value[0],$value[1]];
+                    elseif(isset($value[0]))
+                        $newParams[$key] = $value[0];
                 }
             } else {
                 $newParams[$key] = $value;
@@ -141,17 +152,4 @@ class Command extends \yii\db\Command
 
         return $newParams;
     }
-
-    /**
-     * Доработанная версия bindValues, умеет принимать массив в формате, который используется парсером (@see \app\components\Command::replaceComment())
-     * @param array $values
-     * @return static
-     */
-    public function bindValues($values)
-    {
-        $values = $this->simplifyParams($values);
-        return parent::bindValues($values);
-    }
-
-
 }
