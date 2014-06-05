@@ -92,6 +92,7 @@ class CommandTest extends TestCase
             [$query, ['param8' => 'v8', 'param9' => 'v9', 'param10' => 'v10'], '/^\s*sql10\s*$/'],
             ["sql1\n\n\n\n\nsql2", ['param1' => 'v1'], '/^sql1\nsql2$/'],
             ["sql1", [], '/^sql1$/'],
+            ["-- test\n".$query, [], '/^-- test$/'],
         ];
     }
 
