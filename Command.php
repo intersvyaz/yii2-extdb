@@ -57,10 +57,6 @@ class Command extends \yii\db\Command
      */
     protected function prepareSql($sql, array &$params = [])
     {
-        if (empty($params)) {
-            return $sql;
-        }
-
         // Разбор многострочных комментариев
         if (preg_match_all('#/\*(\w+)(.+?)\*/#s', $sql, $matches)) {
             $count = count($matches[0]);
