@@ -40,7 +40,7 @@ class ConnectionTest extends TestCase
 
         $this->assertInstanceOf('\Intersvyaz\ExtDb\Command', $command);
         $this->assertRegExp('/^select\s+\*\s+from\s+profile\s+where\s+1=1\s+and description = :desc$/', $command->getSql());
-        $this->assertEquals(['desc'=>'1'], $command->params);
+        $this->assertEquals([':desc'=>'1'], $command->params);
     }
 
 

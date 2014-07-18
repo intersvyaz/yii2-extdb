@@ -24,12 +24,12 @@ class CommandTest extends TestCase
     {
         return [
             [[], []],
-            [['simpleName' => 'simpleValue'], ['simpleName' => 'simpleValue']],
-            [['simpleNameSimpleValueWithType' => ['simpleValue', \PDO::PARAM_STR]], ['simpleNameSimpleValueWithType' => ['simpleValue', \PDO::PARAM_STR]]],
-            [['complexNameSimpleValue' => ['simpleValue', 'bind' => true]], ['complexNameSimpleValue' => 'simpleValue']],
-            [['complexNameBindText' => ['simpleValue', 'bind' => 'text']], []],
-            [['complexNameNoBind' => ['bind' => false]], []],
-            [['arrayName' => [[0, 1, 2, 3]]], ['arrayName_0' => 0, 'arrayName_1' => 1, 'arrayName_2' => 2, 'arrayName_3' => 3]],
+            [[':simpleName' => 'simpleValue'], [':simpleName' => 'simpleValue']],
+            [[':simpleNameSimpleValueWithType' => ['simpleValue', \PDO::PARAM_STR]], [':simpleNameSimpleValueWithType' => ['simpleValue', \PDO::PARAM_STR]]],
+            [[':complexNameSimpleValue' => ['simpleValue', 'bind' => true]], [':complexNameSimpleValue' => 'simpleValue']],
+            [[':complexNameBindText' => ['simpleValue', 'bind' => 'text']], []],
+            [[':complexNameNoBind' => ['bind' => false]], []],
+            [['arrayName' => [[0, 1, 2, 3]]], [':arrayName_0' => 0, ':arrayName_1' => 1, ':arrayName_2' => 2, ':arrayName_3' => 3]],
         ];
     }
 
@@ -158,7 +158,7 @@ class CommandTest extends TestCase
         $command->bindValues($params);
 
         $this->assertRegExp('/^select\s+\*\s+from\s+profile\s+where\s+1=1\s+and description = :desc$/', $command->getSql());
-        $this->assertEquals(['desc'=>'1'], $command->params);
+        $this->assertEquals([':desc'=>'1'], $command->params);
     }
 
 
