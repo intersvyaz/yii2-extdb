@@ -19,15 +19,6 @@ class Connection extends \yii\db\Connection
     /**
      * @inheritdoc
      */
-    protected function createPdoInstance()
-    {
-        $this->trigger(self::EVENT_BEFORE_OPEN);
-        return parent::createPdoInstance();
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function createCommand($sql = null, $params = [])
     {
         $this->open();
@@ -38,5 +29,14 @@ class Connection extends \yii\db\Connection
         $command->setSql($sql, $params);
 
         return $command->bindValues($params);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function createPdoInstance()
+    {
+        $this->trigger(self::EVENT_BEFORE_OPEN);
+        return parent::createPdoInstance();
     }
 }
