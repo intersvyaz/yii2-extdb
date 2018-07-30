@@ -6,18 +6,25 @@
 
 namespace Intersvyaz\ExtDb;
 
-use PDO;
-use Yii;
-use yii\base\Component;
-use yii\base\InvalidConfigException;
-use yii\base\NotSupportedException;
-use yii\caching\Cache;
-
 /**
  * @inheritdoc
  */
 class Connection extends \yii\db\Connection
 {
+    /**
+     * @event [[yii\base\Event|Event]] an event that is triggered before a DB connection is established
+     */
+    const EVENT_BEFORE_OPEN = 'beforeOpen';
+
+    /**
+     * @inheritdoc
+     */
+    protected function createPdoInstance()
+    {
+        $this->trigger(self::EVENT_BEFORE_OPEN);
+        return parent::createPdoInstance();
+    }
+
     /**
      * @inheritdoc
      */
